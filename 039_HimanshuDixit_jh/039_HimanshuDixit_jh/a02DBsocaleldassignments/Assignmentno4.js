@@ -1,0 +1,54 @@
+const express = require('express');
+
+const app = express();
+const mysql = require('mysql2');
+app.use(express.static("sf"));
+let dbparams =
+{
+    host:"localhost",
+    user:"himanshu1",
+    password:"cdac",
+    database:"kanpur",
+    port:3306
+};
+
+const con = mysql.createConnection(dbparams);
+/*app.get("/pincode", (req, resp) => {
+    let pincode = req.query.pincode;
+  
+
+    if (pincode==="123456") {
+        loginstatus.status = true;
+        loginstatus.message = "success";
+    }
+    resp.send(loginstatus); 
+});
+*/
+app.get("/pincode", (req, resp) => {
+    let pincode1 = req.query.pincode;
+    console.log(pincode1);
+    let details = { status: false, cityname: {} }
+    con.query('select city from citytable where pincode=?', [pincode1],
+        (error, cityRow) => {
+         //   console.log("error occured");
+            if (error) {
+                //when you dont have data why problem is there collect data first.
+                console.log("Error aaa raha he be" + error);
+            }
+            else if(cityRow.length>0){
+                details.status = true;
+                details.cityname =cityRow[0]
+            }
+           resp.send(details);
+
+            console.log("search");
+
+        }
+    );
+    console.log(details.cityname.city)
+    
+});
+app.listen(170, function () {
+    console.log("Server connect tomport 1700");
+
+});
